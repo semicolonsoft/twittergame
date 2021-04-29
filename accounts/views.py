@@ -45,7 +45,7 @@ class register(APIView):
         auth.login(request, new_user)
         return JsonResponse({"status":"True","message":f"welcome {username_} dear!", 'token':f'Token {token.key}'})
 
-
+###############33
 class is_login(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, req):
