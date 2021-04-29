@@ -39,6 +39,7 @@ class register(APIView):
 
         new_user=User(username=username_,password=password_,email=email_)
         new_user.image = request.FILES['image']
+        new_user.bio = request.POST['bio']
         new_user.save()
         token = Token.objects.create(user=new_user)
         auth.login(request, new_user)
