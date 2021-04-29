@@ -152,7 +152,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'twittergame/statics')
 ]
-STATIC_ROOT = os.path.join(BASE_DIR, 'twittergame/STATICS')
+STATIC_ROOT = os.path.join(BASE_DIR, 'twittergame/statics')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'twittergame/MEDIA')
