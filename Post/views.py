@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from django.http import JsonResponse
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate
 from rest_framework.response import Response
@@ -43,27 +44,27 @@ def Posts(request):
             serializer = postClassSerializer(snippets, many=True)
             return Response(serializer.data)
 
-        return Response("Does not exist")
+        return HttpResponse("Does not exist",status=400)
     
     elif request.method == 'DELETE':
         chatId = request.GET['postId']
 
         if(postClass.objects.filter(postId = chatId).count() == 0):
-            return Response("Does not exist")
+            return HttpResponse("Does not exist",status=400)
 
         elif(True):
             postClass.objects.filter(postId = chatId).delete()
-            return Response("successful")
+            return HttpResponse("DELETE was successful!",status=200)
     
     elif request.method == 'PATCH':
         chatId = request.GET['postId']
         if(postClass.objects.filter(postId = chatId).count() == 0) :
-            return Response("Does not exist")
+            return HttpResponse("Does not exist",status=400)
 
         hold = postClass.objects.get(postId = chatId)
         hold.message = request.GET['newMessage']
         hold.save()
-        return Response("successful")
+        return HttpResponse("EDIT was successful!",status=200)
 
 
 @csrf_exempt
@@ -76,17 +77,17 @@ def Replays(request):
             serializer = replayClassSerializer(snippets, many=True)
             return Response(serializer.data)
         elif(True):
-            return Response("Does not exist")
+            return HttpResponse("Does not exist",status=400)
     
     elif request.method == 'DELETE':
         mainPostId = request.GET['mainPost']
         subPostId = request.GET['subPost']
 
         if(replayClass.objects.filter(mainPost = mainPostId).filter(subPost = subPostId).count() == 0):
-            return Response("Does not exist")
+            return HttpResponse("Does not exist",status=400)
         
         replayClass.objects.filter(mainPost = mainPostId).filter(subPost = subPostId).delete()
-        return Response("successful")
+        return HttpResponse("DELETE was successful!",status=200)
 
 
 @csrf_exempt
@@ -99,7 +100,7 @@ def Like(request):
             serializer = likesClassSerializer(snippets, many=True)
             return Response(serializer.data)
         elif(True):
-            return Response("Does not exist")
+            return HttpResponse("Does not exist",status=400)
 
     
     elif request.method == 'DELETE':
@@ -107,7 +108,7 @@ def Like(request):
         user = request.GET['UserName']
 
         if(likesClass.objects.filter(PostId = mainPostId).filter(UserName = user).count() == 0):
-            return Response("Does not exist")
+            return HttpResponse("Does not exist",status=400)
         
         likesClass.objects.filter(PostId = mainPostId).filter(UserName = user).delete()
-        return Response("success")
+        return HttpResponse("DELETE was successful!",status=200)
