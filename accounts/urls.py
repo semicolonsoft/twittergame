@@ -10,6 +10,7 @@ urlpatterns = [
     path('getfollowers', getfollowers.as_view()),
     path('getfollowings', getfollowings.as_view()),
     path('getsuggested', getsuggested.as_view()),
+    path('search', search.as_view()),
 
 
 
