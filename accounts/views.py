@@ -126,10 +126,11 @@ class getimage(APIView):
 class getfollowers(APIView):
     @csrf_exempt
     def get(self,req):
-
         followers=req.user.followers.all()
-        f=serializers.serialize('json', followers)
-        return Response({'followers':f})
+
+        b=UserSerializer(followers,many=True)
+        return Response(b.data)
+
 
 
 class getfollowings(APIView):
@@ -137,20 +138,28 @@ class getfollowings(APIView):
 
     def get(self,req):
         followings=req.user.following.all()
-        f=serializers.serialize('json', followings)
-        return Response({'followings':f})
+        b=UserSerializer(followings,many=True)
+        return Response(b.data)
+
 
 
 class getsuggested(APIView):
     @csrf_exempt
 
-    def get(self,req):
-        a=req.user.suggested()
-        print(a)
+    def post(self,req):
+        a=User.objects.filter(username=req.POST["username"])
+        # a=req.user.suggested()
         b=UserSerializer(a,many=True)
         return Response(b.data)
 
-
+class get_user_id(APIView):
+    def get(self,req):
+        a=req.POST['id']
+        b=User.objects.get(id=a)
+        # # print(b)
+        # c=UserSerializer(b,many=True)
+        # print()
+        return Response({"username":b.username,"email":b.email,"image":b.image.url})
 
 
 def verify_code(req):
