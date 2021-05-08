@@ -7,7 +7,6 @@ class User(AbstractUser):
     bio = models.CharField(max_length=255, default=None, null=True)
     following=models.ManyToManyField('accounts.User',related_name='followers')
 
-
     def suggested(self):
         a=self.following.all()
         

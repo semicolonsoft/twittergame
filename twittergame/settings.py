@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'accounts',
     'corsheaders',
+    'Post',
+    'GameBar',
 
 ]
 CORS_ALLOWED_ORIGINS = [

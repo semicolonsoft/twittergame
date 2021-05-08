@@ -42,8 +42,14 @@ class register(APIView):
 
         new_user=User(username=username_,email=email_)
         new_user.set_password(password_)
-        new_user.image = request.FILES['image']
-        new_user.bio = request.POST['bio']
+        try:
+            new_user.image = request.FILES['image']
+            new_user.bio = request.POST['bio']
+
+        except:
+            pass
+
+
         new_user.save()
         token = Token.objects.create(user=new_user)
         auth.login(request, new_user)
@@ -69,6 +75,23 @@ class login(APIView):
 
             return JsonResponse({'status':'fail','message':'wrong password'})
 
+class update_profile(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,req):
+        myuser=User.objects.filter(username=req.user.username)[0]
+        print(myuser.email)
+        try:
+            myuser.bio=req.POST["bio"]
+            myuser.save()
+        except:
+            pass
+        try:
+            myuser.image=req.FILES["image"]
+
+        except:
+            return Response({'status':'fail','message':'not change'})
+
+        return Response({'status':'true','message':'profile updated!'})
 
 class is_login(APIView):
     permission_classes = [IsAuthenticated]

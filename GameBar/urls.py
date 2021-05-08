@@ -2,7 +2,7 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    path('GameRec', GameRec.as_view()),
+    path('GameRec', GameRec),
 
 
 ]
