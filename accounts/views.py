@@ -56,25 +56,29 @@ class register(APIView):
         return JsonResponse({"status":"True","message":f"welcome {username_} dear!", 'token':f'Token {token.key}'})
 
 class login(APIView):
-    def post(request):
+    def post(self,request):
         password_=request.POST["password"]
         #if user enter email
         if '@' in request.POST['usernameormail']:
-            user = User.objects.filter(email=request.POST['usernameormail'])
+            myuser = User.objects.filter(email=request.POST['usernameormail'])
         #if user enter username
         else:
-            user = User.objects.filter(username=request.POST['usernameormail'])
-        if user and user[0].check_password(password_):
-            auth.login(request, user[0])
-            token = Token.objects.get(uesr=user[0])
-            return JsonResponse({'status':'success', 'token':f'Token {token.key}'})
+            myuser = User.objects.filter(username=request.POST['usernameormail'])[0]
 
-        elif not user:
+
+
+        if  myuser.check_password(password_) :
+            auth.login(request, myuser)
+            token = Token.objects.get(username=myuser)
+            # return JsonResponse({'status':'success', 'token':f'Token {token.key}'})
+            print(3)
+
+        elif not myuser:
             return JsonResponse({'status':'fail' ,'message':'user not found'})
         else:
 
             return JsonResponse({'status':'fail','message':'wrong password'})
-
+        return Response('5')
 class update_profile(APIView):
     permission_classes=[IsAuthenticated]
     def post(self,req):
