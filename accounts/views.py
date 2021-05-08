@@ -15,6 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 class follow(APIView):
     permission_classes = [IsAuthenticated]
+    @csrf_exempt
     def post(self, request):
         user = User.objects.filter(username=request.POST["username"])
         if not user:
@@ -57,6 +58,7 @@ class register(APIView):
         return JsonResponse({"status":"True","message":f"welcome {username_} dear!", 'token':f'Token {token.key}'})
 
 class login(APIView):
+    @csrf_exempt
     def post(self,request):
         password_=request.POST["password"]
         #if user enter email
@@ -82,6 +84,8 @@ class login(APIView):
         return Response('5')
 class update_profile(APIView):
     permission_classes=[IsAuthenticated]
+    @csrf_exempt
+
     def post(self,req):
         myuser=User.objects.filter(username=req.user.username)[0]
         print(myuser.email)
@@ -100,19 +104,25 @@ class update_profile(APIView):
 
 class is_login(APIView):
     permission_classes = [IsAuthenticated]
+    @csrf_exempt
+
     def get(self, req):
         return Response({'status':'yes'})
 
 class getprofile(APIView):
+    @csrf_exempt
+
     def get(self,req):
         return Response({'id':req.user.username,'bio':req.user.bio,'following_num':req.user.following.count(),'follower_num':req.user.followers.count()})
 
 class getimage(APIView):
+    @csrf_exempt
     def get(self,req):
         return Response({'image':req.user.image.url})
 
 
 class getfollowers(APIView):
+    @csrf_exempt
     def get(self,req):
 
         followers=req.user.followers.all()
@@ -121,6 +131,8 @@ class getfollowers(APIView):
 
 
 class getfollowings(APIView):
+    @csrf_exempt
+
     def get(self,req):
         followings=req.user.following.all()
         f=serializers.serialize('json', followings)
@@ -128,6 +140,8 @@ class getfollowings(APIView):
 
 
 class getsuggested(APIView):
+    @csrf_exempt
+
     def get(self,req):
         a=req.user.suggested()
         print(a)
