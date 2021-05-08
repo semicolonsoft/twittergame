@@ -72,16 +72,16 @@ class login(APIView):
 
         if  myuser.check_password(password_) :
             auth.login(request, myuser)
-            token = Token.objects.get(username=myuser)
-            # return JsonResponse({'status':'success', 'token':f'Token {token.key}'})
-            print(3)
+            token = Token.objects.get(user=myuser)
+            return JsonResponse({'status':'success', 'token':f'Token {token.key}'})
 
         elif not myuser:
             return JsonResponse({'status':'fail' ,'message':'user not found'})
         else:
 
             return JsonResponse({'status':'fail','message':'wrong password'})
-        return Response('5')
+
+
 class update_profile(APIView):
     permission_classes=[IsAuthenticated]
     @csrf_exempt
