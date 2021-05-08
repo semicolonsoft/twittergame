@@ -8,7 +8,6 @@ class User(AbstractUser):
     following=models.ManyToManyField('accounts.User',related_name='followers')
 
 
-
     def suggested(self):
         a=self.following.all()
         
@@ -28,14 +27,6 @@ class User(AbstractUser):
 
         return suggested
                 
-                    
+                
 
-
-
-
-
-
-    # def __str__(self):
-
-    #     return self.username
 
