@@ -40,13 +40,34 @@ class register(APIView):
         if  same:
             return JsonResponse({"status":"fail!","message":"username repeated!"})
 
-        new_user=User(username=username_,password=password_,email=email_)
+        new_user=User(username=username_,email=email_)
+        new_user.set_password(password_)
         new_user.image = request.FILES['image']
         new_user.bio = request.POST['bio']
         new_user.save()
         token = Token.objects.create(user=new_user)
         auth.login(request, new_user)
         return JsonResponse({"status":"True","message":f"welcome {username_} dear!", 'token':f'Token {token.key}'})
+
+class login(APIView):
+    def post(request):
+        password_=request.POST["password"]
+        #if user enter email
+        if '@' in request.POST['usernameormail']:
+            user = User.objects.filter(email=request.POST['usernameormail'])
+        #if user enter username
+        else:
+            user = User.objects.filter(username=request.POST['usernameormail'])
+        if user and user[0].check_password(password_):
+            auth.login(request, user[0])
+            token = Token.objects.get(uesr=user[0])
+            return JsonResponse({'status':'success', 'token':f'Token {token.key}'})
+
+        elif not user:
+            return JsonResponse({'status':'fail' ,'message':'user not found'})
+        else:
+
+            return JsonResponse({'status':'fail','message':'wrong password'})
 
 
 class is_login(APIView):
@@ -68,9 +89,6 @@ class getfollowers(APIView):
 
         followers=req.user.followers.all()
         f=serializers.serialize('json', followers)
-
-        # f=list(followers)
-        # print(f)
         return Response({'followers':f})
 
 
@@ -83,17 +101,11 @@ class getfollowings(APIView):
 
 class getsuggested(APIView):
     def get(self,req):
-        # f=serializers.serialize('json', req.user.suggested)
         a=req.user.suggested()
         print(a)
         b=UserSerializer(a,many=True)
-        # serializer=UserViewSet(a,many=True)
         return Response(b.data)
 
-
-# class UserViewSet(viewsets.ModelViewSet):
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
 
 
 
@@ -127,24 +139,7 @@ def resend_verification_code(req):
     recipient_list=[user[0].email],
     )
     return JsonResponse({'status':'success'})
-def login(request):
-    password_=request.POST["password"]
-    #if user enter email
-    if '@' in request.POST['usernameormail']:
-        user = User.objects.filter(email=request.POST['usernameormail'])
-    #if user enter username
-    else:
-        user = User.objects.filter(username=request.POST['usernameormail'])
-    if user and password_==user[0].password:
-        auth.login(request, user[0])
-        token = Token.objects.get(uesr=user[0])
-        return JsonResponse({'status':'success', 'token':f'Token {token.key}'})
-        
-    elif not user:
-        return JsonResponse({'status':'fail' ,'message':'user not found'})
-    else:
 
-        return JsonResponse({'status':'fail','message':'wrong password'})
 def forget_password(request):
     user = User.objects.filter(email=request.POST('email'))
     if not user:
