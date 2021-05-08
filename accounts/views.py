@@ -11,6 +11,7 @@ from rest_framework.authtoken.models import Token
 from django.forms.models import model_to_dict
 from django.core import serializers
 from .serializers import UserSerializer
+from django.views.decorators.csrf import csrf_exempt
 
 class follow(APIView):
     permission_classes = [IsAuthenticated]
