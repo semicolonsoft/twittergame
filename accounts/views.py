@@ -25,8 +25,8 @@ class follow(APIView):
         return Response({'status':'success'})
 
 
-@csrf_exempt
 class register(APIView):
+    @csrf_exempt
     def post(self, request):
         username_=request.POST["username"]
         email_=request.POST["email"]
