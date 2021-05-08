@@ -109,11 +109,13 @@ class is_login(APIView):
     def get(self, req):
         return Response({'status':'yes'})
 
+
+
 class getprofile(APIView):
     @csrf_exempt
 
     def get(self,req):
-        return Response({'id':req.user.username,'bio':req.user.bio,'following_num':req.user.following.count(),'follower_num':req.user.followers.count()})
+        return Response({'id':req.user.username,'bio':req.user.bio,'following_num':req.user.following.count(),'follower_num':req.user.followers.count(),'image':req.user.image.url})
 
 class getimage(APIView):
     @csrf_exempt
