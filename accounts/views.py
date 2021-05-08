@@ -22,7 +22,11 @@ class follow(APIView):
             return Response({'status':'fail!', 'message':'invalide username'})
         if request.user == user:
             return Response({'status':'fail!', 'message':'self follwoing'})
-        request.user.following.add(user[0])
+        if  user[0] in request.user.following.all():
+            request.user.following.remove(user[0])
+
+        else:
+            request.user.following.add(user[0])
         return Response({'status':'success'})
 
 
@@ -153,6 +157,8 @@ class getsuggested(APIView):
         return Response(b.data)
 
 class get_user_id(APIView):
+    @csrf_exempt
+
     def get(self,req):
         a=req.POST['id']
         b=User.objects.get(id=a)
@@ -160,6 +166,13 @@ class get_user_id(APIView):
         # c=UserSerializer(b,many=True)
         # print()
         return Response({"username":b.username,"email":b.email,"image":b.image.url})
+
+
+# class search(APIView):
+#     @csrf_exempt
+#     def(self,req):
+
+
 
 
 def verify_code(req):
