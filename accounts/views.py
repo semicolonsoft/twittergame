@@ -174,7 +174,7 @@ class get_user_id(APIView):
             return Response({"username":b.username,"email":b.email,"image":b.image.url})
 
 
-# class search(APIView):
+# ffclass search(APIView):
 #     @csrf_exempt
 #     def(self,req):
 
