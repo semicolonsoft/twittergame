@@ -21,8 +21,8 @@ from . import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('account/', include('accounts.urls')),
-    path('account/', include('Post.urls')),
-    path('account/', include('GameBar.urls')),
+    path('Post/', include('Post.urls')),
+    path('GameBar/', include('GameBar.urls')),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     
 
