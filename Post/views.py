@@ -54,8 +54,8 @@ def Posts(request):
                         return HttpResponse("The size should not be less than 10 KB",status=403)
                     Obj = postClass(message = messageTxt,UserName=request.user,image = imageFile)
                     Obj.save()
+
             except:
-                imageFile = request.POST["image"]
                 Obj = postClass(message = messageTxt,UserName=request.user)
                 Obj.save()
         return HttpResponse("POST was successful!",status=200)
