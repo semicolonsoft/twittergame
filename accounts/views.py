@@ -48,8 +48,9 @@ class register(APIView):
 
         new_user=User(username=username_,email=email_)
         new_user.set_password(password_)
+        new_user.image = request.FILES['image']
+
         try:
-            new_user.image = request.FILES['image']
             new_user.bio = request.POST['bio']
 
         except:
