@@ -35,8 +35,8 @@ class replayClassViewSet(viewsets.ModelViewSet):
 @api_view(('GET','DELETE','PATCH','POST'))
 def Posts(request):
 
-    # if(request.user.is_anonymous):
-    #     return HttpResponse("you have to login first!",status=403)
+    if(request.user.is_anonymous):
+        return HttpResponse("you have to login first!",status=403)
 
     if request.method == 'POST':
         messageTxt = request.POST["message"]
@@ -94,8 +94,8 @@ def Posts(request):
 @api_view(('GET','DELETE','POST'))
 def Replays(request):
 
-    # if(request.user.is_anonymous):
-    #     return HttpResponse("you have to login first!",status=403)
+    if(request.user.is_anonymous):
+        return HttpResponse("you have to login first!",status=403)
 
     if request.method == 'POST':
         mainPostId = request.POST['mainPost']
@@ -136,8 +136,8 @@ def Replays(request):
 @api_view(('GET','DELETE','POST'))
 def Like(request):
 
-    # if(request.user.is_anonymous):
-    #     return HttpResponse("you have to login first!",status=403)
+    if(request.user.is_anonymous):
+        return HttpResponse("you have to login first!",status=403)
 
     if request.method == 'POST':
         mainPostId = request.POST['PostId']
