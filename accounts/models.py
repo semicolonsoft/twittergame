@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    image = models.ImageField(upload_to='account/avatar/',null=True,default=None)
+    image = models.ImageField(upload_to='account/avatar/',null=True,default='account/avatar/defult.jpg')
     bio = models.CharField(max_length=255, default=None, null=True)
     following=models.ManyToManyField('accounts.User',related_name='followers')
 
