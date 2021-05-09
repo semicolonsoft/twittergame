@@ -179,7 +179,11 @@ class get_user_id(APIView):
         # # print(b)
         # c=UserSerializer(b,many=True)
         # print()
-            return Response({"username":b.username,"email":b.email,"image":b.image.url})
+            try:
+
+                return Response({"username":b.username,"email":b.email,"image":b.image.url})
+            except:
+                return Response({"username":b.username,"email":b.email})
 
 
 # ffclass search(APIView):
