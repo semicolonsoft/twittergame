@@ -160,7 +160,6 @@ def Like(request):
     
     elif request.method == 'DELETE':
         mainPostId = request.POST['PostId']
-
         if(likesClass.objects.filter(PostId = mainPostId).count() != 0):
             if(likesClass.objects.filter(PostId = mainPostId).filter(UserName = user).count() == 0):
                 return HttpResponse("You can only delete your own likes!",status=401)
