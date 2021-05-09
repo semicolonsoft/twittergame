@@ -114,11 +114,11 @@ class is_login(APIView):
 
     def get(self, req):
         if req.user.is_authenticated:
-            # try:
-            return Response({'status':'true','id':req.user.username,'bio':req.user.bio,'following_num':req.user.following.count(),'follower_num':req.user.followers.count(),'image':req.user.image.url})
+            try:
+                return Response({'status':'true','id':req.user.id,'bio':req.user.bio,'following_num':req.user.following.count(),'follower_num':req.user.followers.count(),'image':req.user.image.url})
 
-            # except:
-                # return Response({'status':'true','id':req.user.username,'following_num':req.user.following.count(),'follower_num':req.user.followers.count()})
+            except:
+                return Response({'status':'true','id':req.user.id,'following_num':req.user.following.count(),'follower_num':req.user.followers.count()})
         else:
             return Response({"status":"fail"})
 
