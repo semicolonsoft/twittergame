@@ -67,7 +67,7 @@ class login(APIView):
         password_=request.POST["password"]
         #if user enter email
         if '@' in request.POST['usernameormail']:
-            myuser = User.objects.filter(email=request.POST['usernameormail'])
+            myuser = User.objects.filter(email=request.POST['usernameormail'])[0]
         #if user enter username
         else:
             myuser = User.objects.filter(username=request.POST['usernameormail'])[0]
