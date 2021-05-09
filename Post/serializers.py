@@ -12,7 +12,7 @@ class postClassSerializer(serializers.HyperlinkedModelSerializer):
 class replayClassSerializer(serializers.HyperlinkedModelSerializer):
     class Meta :
         model = replayClass
-        fields = ('mainPost', 'subPost')
+        fields = ('mainPost', 'subPost','UserName')
 
 class likesClassSerializer(serializers.HyperlinkedModelSerializer):
     class Meta :
