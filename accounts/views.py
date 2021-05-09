@@ -169,21 +169,14 @@ class get_user_id(APIView):
 
     def get(self,req):
         a=req.POST['id']
-        n=User.objects.count()
-
-        if int(a)>n:
-            return Response({'status':'fail'})
-        else:
-
+        # n=User.objects.count()
+        try:
             b=User.objects.get(id=a)
-        # # print(b)
-        # c=UserSerializer(b,many=True)
-        # print()
-            try:
+            return Response({"username":b.username,"email":b.email,"image":b.image.url})
+        except:
 
-                return Response({"username":b.username,"email":b.email,"image":b.image.url})
-            except:
-                return Response({"username":b.username,"email":b.email})
+            return Response({'status':'fail'})
+        
 
 
 # ffclass search(APIView):
