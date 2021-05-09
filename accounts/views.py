@@ -48,9 +48,10 @@ class register(APIView):
 
         new_user=User(username=username_,email=email_)
         new_user.set_password(password_)
-        new_user.image = request.FILES['image']
 
         try:
+            new_user.image = request.FILES['image']
+
             new_user.bio = request.POST['bio']
 
         except:
@@ -108,12 +109,14 @@ class update_profile(APIView):
         return Response({'status':'true','message':'profile updated!'})
 
 class is_login(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     @csrf_exempt
 
     def get(self, req):
-        return Response({'status':'yes'})
-
+        if req.user.is_authenticated:
+            return Response({'status':'true','id':req.user.username,'bio':req.user.bio,'following_num':req.user.following.count(),'follower_num':req.user.followers.count(),'image':req.user.image.url})
+        else:
+            return Response({"status":"fail"})
 
 
 class getprofile(APIView):
