@@ -173,7 +173,7 @@ class get_user_id(APIView):
         # n=User.objects.count()
         try:
             b=User.objects.get(id=a)
-            return Response({"username":b.username,"email":b.email,"image":b.image.url})
+            return Response({"username":b.username,"email":b.email,"image":b.image.url,'following_num':b.following.count(),'follower_num':b.followers.count()})
         except:
 
             return Response({'status':'fail'})
