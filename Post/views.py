@@ -61,7 +61,7 @@ def Posts(request):
         return HttpResponse("POST was successful!",status=200)
 
     elif request.method == 'GET':
-        User = request.POST["UserName"]
+        User = request.POST["Username"]
         if(postClass.objects.filter(UserName=User).count() != 0):
             snippets = postClass.objects.filter(UserName=User)
             serializer = postClassSerializer(snippets, many=True)
