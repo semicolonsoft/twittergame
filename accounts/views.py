@@ -22,7 +22,7 @@ class follow(APIView):
         user = User.objects.filter(id=request.POST["id"])
         if not user:
             return Response({'status':'fail!', 'message':'invalide username'})
-        if request.user == user:
+        if request.user == user[0]:
             return Response({'status':'fail!', 'message':'self follwoing'})
         if  user[0] in request.user.following.all():
             request.user.following.remove(user[0])
