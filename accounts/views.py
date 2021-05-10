@@ -19,17 +19,19 @@ class follow(APIView):
     permission_classes = [IsAuthenticated]
     @csrf_exempt
     def post(self, request):
-        user = User.objects.filter(username=request.POST["username"])
+        user = User.objects.filter(id=request.POST["id"])
         if not user:
             return Response({'status':'fail!', 'message':'invalide username'})
         if request.user == user:
             return Response({'status':'fail!', 'message':'self follwoing'})
         if  user[0] in request.user.following.all():
             request.user.following.remove(user[0])
+            return Response({'status':'success','message':'unfollowed'})
+
 
         else:
             request.user.following.add(user[0])
-        return Response({'status':'success'})
+            return Response({'status':'success','message':'followed'})
 
 
 class register(APIView):
