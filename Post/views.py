@@ -53,11 +53,11 @@ def Posts(request):
                         return HttpResponse("File too large. Size should not exceed 5 MB.",status=403)
                     elif(len(Image.open(imageFile).fp.read()) < 10000):
                         return HttpResponse("The size should not be less than 10 KB",status=403)
-                    Obj = postClass(message = messageTxt,Username=request.user,image = imageFile)
+                    Obj = postClass(message = messageTxt,UserName=request.user,image = imageFile)
                     Obj.save()
 
             except:
-                Obj = postClass(message = messageTxt,Username=request.user)
+                Obj = postClass(message = messageTxt,UserName=request.user)
                 Obj.save()
         return HttpResponse("POST was successful!",status=200)
 
