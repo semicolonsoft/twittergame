@@ -23,7 +23,7 @@ class follow(APIView):
         if not user:
             return Response({'status':'fail!', 'message':'invalide username'})
         if request.user == user[0]:
-            return Response({'status':'fail!', 'message':'self follwoing'})
+            return Response({'status':'fail!', 'message':'you cant follow yourself'})
         if  user[0] in request.user.following.all():
             request.user.following.remove(user[0])
             return Response({'status':'success','message':'unfollowed'})
