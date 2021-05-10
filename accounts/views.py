@@ -175,7 +175,7 @@ class get_user_id(APIView):
         # n=User.objects.count()
         try:
             b=User.objects.get(id=a)
-            if req.user in b.following.all():
+            if b in req.user.following.all():
                 return Response({"isFollow":"true","username":b.username,"email":b.email,"image":b.image.url,'following_num':b.following.count(),'follower_num':b.followers.count()})
             else:
                 return Response({"isFollow":"false","username":b.username,"email":b.email,"image":b.image.url,'following_num':b.following.count(),'follower_num':b.followers.count()})
