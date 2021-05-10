@@ -35,6 +35,7 @@ class replayClassViewSet(viewsets.ModelViewSet):
 @api_view(('GET','DELETE','PATCH','POST'))
 def Posts(request):
 
+
     if(request.user.is_anonymous):
         return HttpResponse("you have to login first!",status=403)
 
@@ -61,9 +62,10 @@ def Posts(request):
         return HttpResponse("POST was successful!",status=200)
 
     elif request.method == 'GET':
-        User = request.GET["Username"]
-        if(postClass.objects.filter(Username=User).count() != 0):
-            snippets = postClass.objects.filter(Username=User)[0]
+        User = request.GET["UserName"]
+        if(postClass.objects.filter(UserName=User).count() != 0):
+
+            snippets = postClass.objects.filter(UserName=User)
             serializer = postClassSerializer(snippets, many=True)
             return Response(serializer.data)
 
@@ -72,7 +74,7 @@ def Posts(request):
     elif request.method == 'DELETE':
         chatId = request.POST['postId']
         if(postClass.objects.filter(postId = chatId).count() != 0):
-            if(postClass.objects.filter(postId = chatId).filter(Username = request.user).count() == 0):
+            if(postClass.objects.filter(postId = chatId).filter(UserName = request.user).count() == 0):
                 return HttpResponse("You can only delete your own posts!",status=403)
             postClass.objects.filter(postId = chatId).delete()
             return HttpResponse("DELETE was successful!",status=200)
