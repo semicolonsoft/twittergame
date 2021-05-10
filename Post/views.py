@@ -63,7 +63,7 @@ def Posts(request):
     elif request.method == 'GET':
         User = request.POST["Username"]
         if(postClass.objects.filter(UserName=User).count() != 0):
-            snippets = postClass.objects.filter(UserName=User)
+            snippets = postClass.objects.filter(UserName=User)[0]
             serializer = postClassSerializer(snippets, many=True)
             return Response(serializer.data)
 
