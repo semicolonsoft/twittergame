@@ -52,18 +52,18 @@ def Posts(request):
                         return HttpResponse("File too large. Size should not exceed 5 MB.",status=403)
                     elif(len(Image.open(imageFile).fp.read()) < 10000):
                         return HttpResponse("The size should not be less than 10 KB",status=403)
-                    Obj = postClass(message = messageTxt,UserName=request.user,image = imageFile)
+                    Obj = postClass(message = messageTxt,Username=request.user,image = imageFile)
                     Obj.save()
 
             except:
-                Obj = postClass(message = messageTxt,UserName=request.user)
+                Obj = postClass(message = messageTxt,Username=request.user)
                 Obj.save()
         return HttpResponse("POST was successful!",status=200)
 
     elif request.method == 'GET':
         User = request.POST["Username"]
-        if(postClass.objects.filter(UserName=User).count() != 0):
-            snippets = postClass.objects.filter(UserName=User)[0]
+        if(postClass.objects.filter(Username=User).count() != 0):
+            snippets = postClass.objects.filter(Username=User)[0]
             serializer = postClassSerializer(snippets, many=True)
             return Response(serializer.data)
 
@@ -72,7 +72,7 @@ def Posts(request):
     elif request.method == 'DELETE':
         chatId = request.POST['postId']
         if(postClass.objects.filter(postId = chatId).count() != 0):
-            if(postClass.objects.filter(postId = chatId).filter(UserName = request.user).count() == 0):
+            if(postClass.objects.filter(postId = chatId).filter(Username = request.user).count() == 0):
                 return HttpResponse("You can only delete your own posts!",status=403)
             postClass.objects.filter(postId = chatId).delete()
             return HttpResponse("DELETE was successful!",status=200)
