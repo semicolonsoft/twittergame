@@ -12,7 +12,7 @@ urlpatterns = [
     path('getfollowers', getfollowers.as_view()),
     path('getfollowings', getfollowings.as_view()),
     path('getsuggested', getsuggested.as_view()),
-    path('get_user_id', get_user_id.as_view()),
+    path('get_user_id', get_user_id),
 
     # path('search', search.as_view()),
 

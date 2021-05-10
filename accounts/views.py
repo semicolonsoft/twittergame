@@ -12,6 +12,7 @@ from django.forms.models import model_to_dict
 from django.core import serializers
 from .serializers import UserSerializer
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view
 
 class follow(APIView):
     permission_classes = [IsAuthenticated]
@@ -164,21 +165,33 @@ class getsuggested(APIView):
         b=UserSerializer(a,many=True)
         return Response(b.data)
 
-class get_user_id(APIView):
-    @csrf_exempt
+# class get_user_id(APIView):
+#     @csrf_exempt
 
-    def get(self,req):
+#     def get(self,req):
+#         a=req.POST['id']
+#         # n=User.objects.count()
+#         try:
+#             b=User.objects.get(id=a)
+#             return Response({"username":b.username,"email":b.email,"image":b.image.url})
+#         except:
+
+#             return Response({'status':'fail'})
+        
+
+@csrf_exempt
+@api_view(('GET','DELETE','POST'))
+def get_user_id(req):
+
+    if req.method == 'GET':
         a=req.POST['id']
-        # n=User.objects.count()
         try:
             b=User.objects.get(id=a)
             return Response({"username":b.username,"email":b.email,"image":b.image.url})
         except:
 
             return Response({'status':'fail'})
-        
-
-
+            
 # ffclass search(APIView):
 #     @csrf_exempt
 #     def(self,req):
