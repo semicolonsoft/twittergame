@@ -17,16 +17,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from . import settings
-from rest_framework import routers
-
-from GameBar.views import gameRecClassViewSet
-from GameBar.views import GameRec
-
-router = routers.DefaultRouter()
-router.register(r'GameRecClass', gameRecClassViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
     path('admin/', admin.site.urls),
     path('account/', include('accounts.urls')),
     path('Post/', include('Post.urls')),
