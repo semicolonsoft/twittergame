@@ -17,6 +17,7 @@ from .models import postClass
 
 from .serializers import replayClassSerializer
 from .models import replayClass
+from rest_framework.views import APIView
 
 
 class likesClassViewSet(viewsets.ModelViewSet):
@@ -34,6 +35,7 @@ class replayClassViewSet(viewsets.ModelViewSet):
 @csrf_exempt
 @api_view(('GET','DELETE','PATCH','POST'))
 def Posts(request):
+
 
     if(request.user.is_anonymous):
         return HttpResponse("you have to login first!",status=403)
@@ -61,9 +63,10 @@ def Posts(request):
         return HttpResponse("POST was successful!",status=200)
 
     elif request.method == 'GET':
-        User = request.POST["UserName"]
+        User = request.GET["UserName"]
         if(postClass.objects.filter(UserName=User).count() != 0):
-            snippets = postClass.objects.filter(UserName=User)
+
+            snippets = postClass.objects.filter(UserName=User).order_by('date').reverse()
             serializer = postClassSerializer(snippets, many=True)
             return Response(serializer.data)
 
@@ -89,6 +92,24 @@ def Posts(request):
             hold.save()
             return HttpResponse("EDIT was successful!",status=200)
         return HttpResponse("Does not exist",status=400)
+
+# class readtwitt(APIView):
+#     @csrf_exempt
+#     def get(self,req):
+#         if(req.user.is_anonymous):
+#             return HttpResponse("you have to login first!",status=403)
+
+#         myuser=req.user.following.all()
+#         print(postClass.objects.filter(UserName__in=myuser).count())
+#         if(postClass.objects.filter(UserName__in=myuser).count() != 0):
+
+#             snippets = postClass.objects.filter(UserName__in=myuser)
+#             print(snippets,type(snippets))
+#             serializer = postClassSerializer(snippets, many=True)
+#             return Response(serializer.data)
+
+#         return HttpResponse("Does not exist",status=400)
+
 
 @csrf_exempt
 @api_view(('GET','DELETE','POST'))

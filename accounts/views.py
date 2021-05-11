@@ -12,22 +12,26 @@ from django.forms.models import model_to_dict
 from django.core import serializers
 from .serializers import UserSerializer
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view
+from django.http import HttpResponse
 
 class follow(APIView):
     permission_classes = [IsAuthenticated]
     @csrf_exempt
     def post(self, request):
-        user = User.objects.filter(username=request.POST["username"])
+        user = User.objects.filter(id=request.POST["id"])
         if not user:
             return Response({'status':'fail!', 'message':'invalide username'})
-        if request.user == user:
-            return Response({'status':'fail!', 'message':'self follwoing'})
+        if request.user == user[0]:
+            return Response({'status':'fail!', 'message':'you cant follow yourself'})
         if  user[0] in request.user.following.all():
             request.user.following.remove(user[0])
+            return Response({'status':'success','message':'unfollowed'})
+
 
         else:
             request.user.following.add(user[0])
-        return Response({'status':'success'})
+            return Response({'status':'success','message':'followed'})
 
 
 class register(APIView):
@@ -115,10 +119,10 @@ class is_login(APIView):
     def get(self, req):
         if req.user.is_authenticated:
             try:
-                return Response({'status':'true','id':req.user.id,'bio':req.user.bio,'following_num':req.user.following.count(),'follower_num':req.user.followers.count(),'image':req.user.image.url})
+                return Response({'status':'true','username':req.user.username,'id':req.user.id,'bio':req.user.bio,'following_num':req.user.following.count(),'follower_num':req.user.followers.count(),'image':req.user.image.url})
 
             except:
-                return Response({'status':'true','id':req.user.id,'following_num':req.user.following.count(),'follower_num':req.user.followers.count()})
+                return Response({'status':'true','username':req.user.username,'id':req.user.id,'following_num':req.user.following.count(),'follower_num':req.user.followers.count()})
         else:
             return Response({"status":"fail"})
 
@@ -166,23 +170,34 @@ class getsuggested(APIView):
 
 class get_user_id(APIView):
     @csrf_exempt
-
-    def get(self,req):
+    def post(self,req):
         a=req.POST['id']
-        n=User.objects.count()
-
-        if int(a)>n:
-            return Response({'status':'fail'})
-        else:
-
+        # n=User.objects.count()
+        try:
             b=User.objects.get(id=a)
-        # # print(b)
-        # c=UserSerializer(b,many=True)
-        # print()
-            return Response({"username":b.username,"email":b.email,"image":b.image.url})
+            if b in req.user.following.all():
+                return Response({"isFollow":"true","username":b.username,"email":b.email,"image":b.image.url,'following_num':b.following.count(),'follower_num':b.followers.count()})
+            else:
+                return Response({"isFollow":"false","username":b.username,"email":b.email,"image":b.image.url,'following_num':b.following.count(),'follower_num':b.followers.count()})
 
+        except:
 
-# ffclass search(APIView):
+            return Response({'status':'fail'})
+        
+
+# @csrf_exempt
+# # @api_view(('GET'))
+# def get_user_id(req):
+#     if req.method == 'GET':
+#         a=req.GET['id']
+#         try:
+#             b=User.objects.get(id=a)
+#             print(b)
+#             return HttpResponse(f"{"username":b.username,"email":b.email,"image":b.image.url}" status=200)
+#         except:
+#             return HttpResponse({'status':'fail'} status=400)
+            
+# # ffclass search(APIView):
 #     @csrf_exempt
 #     def(self,req):
 
