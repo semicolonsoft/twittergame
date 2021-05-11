@@ -3,6 +3,4 @@ from .views import *
 
 urlpatterns = [
     path('GameRec', GameRec),
-
-
 ]
