@@ -14,6 +14,7 @@ from .serializers import UserSerializer
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from django.http import HttpResponse
+from django.db.models import Q
 
 class follow(APIView):
     permission_classes = [IsAuthenticated]
@@ -32,6 +33,29 @@ class follow(APIView):
         else:
             request.user.following.add(user[0])
             return Response({'status':'success','message':'followed'})
+
+
+
+class search(APIView):
+    @csrf_exempt
+    def get(self,req):
+        # myuser=req.user
+        serachfield=req.POST['serachfield']
+        page_num=req.POST['page_num']
+        page_size=req.POST['page_size']
+
+
+        myfilter=(Q(username__contains=serachfield)| Q(email__contains=serachfield)|Q(first_name__contains=serachfield)|Q(last_name__contains=serachfield))
+        res=User.objects.complex_filter(myfilter)
+        result=UserSerializer(res,many=True)
+        if len(res)>int(page_size):
+            try:
+                return Response(result.data[(int(page_size))*(int(page_num)-1):(int(page_size))*(int(page_num))])
+            except:
+                return Response({"status":"fail","message":"wronge page size and number"})
+
+
+            
 
 
 class register(APIView):

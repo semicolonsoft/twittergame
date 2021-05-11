@@ -14,7 +14,7 @@ urlpatterns = [
     path('getsuggested', getsuggested.as_view()),
     path('get_user_id', get_user_id.as_view()),
 
-    # path('search', search.as_view()),
+    path('search', search.as_view()),
 
 
 
