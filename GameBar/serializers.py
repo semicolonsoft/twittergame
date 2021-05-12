@@ -4,4 +4,4 @@ from .models import gameRecClass
 class gameRecClassSerializer(serializers.HyperlinkedModelSerializer):
     class Meta :
         model = gameRecClass
-        fields = ('GameName', 'UserName' ,'Reocrd','date')
+        fields = ('GameName', 'UserName' ,'Record','date')
