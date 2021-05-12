@@ -53,7 +53,8 @@ class search(APIView):
                 return Response(result.data[(int(page_size))*(int(page_num)-1):(int(page_size))*(int(page_num))])
             except:
                 return Response({"status":"fail","message":"wronge page size and number"})
-
+        return Response({"status":"fail","message":"there is not any user"})
+    
 
             
 
