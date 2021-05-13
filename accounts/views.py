@@ -16,6 +16,7 @@ from rest_framework.decorators import api_view
 from django.http import HttpResponse
 from django.db.models import Q
 
+
 class follow(APIView):
     permission_classes = [IsAuthenticated]
     @csrf_exempt
@@ -137,6 +138,7 @@ class update_profile(APIView):
 
         return Response({'status':'true','message':'profile updated!'})
 
+
 class is_login(APIView):
     # permission_classes = [IsAuthenticated]
     @csrf_exempt
@@ -228,6 +230,43 @@ class get_user_id(APIView):
 
 
 
+class getprofile(APIView):
+    def get(self,req):
+        return Response({'id':req.user.username,'bio':req.user.bio,'following_num':req.user.following.count(),'follower_num':req.user.followers.count()})
+
+class getimage(APIView):
+    def get(self,req):
+        return Response({'image':req.user.image.url})
+
+
+class getfollowers(APIView):
+    def get(self,req):
+
+        followers=req.user.followers.all()
+        f=serializers.serialize('json', followers)
+
+        # f=list(followers)
+        # print(f)
+        return Response({'followers':f})
+
+
+class getfollowings(APIView):
+    def get(self,req):
+        followings=req.user.following.all()
+        f=serializers.serialize('json', followings)
+        return Response({'followings':f})
+
+
+class getsuggested(APIView):
+    def get(self,req):
+        # f=serializers.serialize('json', req.user.suggested)
+        print(req.user.suggested)
+        return Response({'suggested':"soon api make"})
+
+
+
+
+
 
 def verify_code(req):
     #if user enter email
@@ -259,7 +298,6 @@ def resend_verification_code(req):
     recipient_list=[user[0].email],
     )
     return JsonResponse({'status':'success'})
-
 def forget_password(request):
     user = User.objects.filter(email=request.POST('email'))
     if not user:
