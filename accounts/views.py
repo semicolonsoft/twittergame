@@ -4,26 +4,64 @@ from django.http import JsonResponse
 from django.contrib import auth
 from django.contrib.auth import authenticate
 from rest_framework.views import APIView
+from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from django.forms.models import model_to_dict
 from django.core import serializers
+from .serializers import UserSerializer
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view
+from django.http import HttpResponse
+from django.db.models import Q
+
 
 class follow(APIView):
     permission_classes = [IsAuthenticated]
+    @csrf_exempt
     def post(self, request):
-        user = User.objects.filter(username=request.POST["username"])
+        user = User.objects.filter(id=request.POST["id"])
         if not user:
             return Response({'status':'fail!', 'message':'invalide username'})
-        if request.user == user:
-            return Response({'status':'fail!', 'message':'self follwoing'})
-        request.user.following.add(user[0])
-        return Response({'status':'success'})
+        if request.user == user[0]:
+            return Response({'status':'fail!', 'message':'you cant follow yourself'})
+        if  user[0] in request.user.following.all():
+            request.user.following.remove(user[0])
+            return Response({'status':'success','message':'unfollowed'})
 
+
+        else:
+            request.user.following.add(user[0])
+            return Response({'status':'success','message':'followed'})
+
+
+
+class search(APIView):
+    @csrf_exempt
+    def get(self,req):
+        # myuser=req.user
+        serachfield=req.POST['serachfield']
+        page_num=req.POST['page_num']
+        page_size=req.POST['page_size']
+
+
+        myfilter=(Q(username__contains=serachfield)| Q(email__contains=serachfield)|Q(first_name__contains=serachfield)|Q(last_name__contains=serachfield))
+        res=User.objects.complex_filter(myfilter)
+        result=UserSerializer(res,many=True)
+        if len(res)>int(page_size):
+            try:
+                return Response(result.data[(int(page_size))*(int(page_num)-1):(int(page_size))*(int(page_num))])
+            except:
+                return Response({"status":"fail","message":"wronge page size and number"})
+        return Response({"status":"fail","message":"there is not any user"})
+    
+
+            
 
 
 class register(APIView):
+    @csrf_exempt
     def post(self, request):
         username_=request.POST["username"]
         email_=request.POST["email"]
@@ -38,19 +76,159 @@ class register(APIView):
         if  same:
             return JsonResponse({"status":"fail!","message":"username repeated!"})
 
-        new_user=User(username=username_,password=password_,email=email_)
-        new_user.image = request.FILES['image']
-        new_user.bio = request.POST['bio']
+        new_user=User(username=username_,email=email_)
+        new_user.set_password(password_)
+
+        try:
+            new_user.image = request.FILES['image']
+
+            new_user.bio = request.POST['bio']
+
+        except:
+            pass
+
+
         new_user.save()
         token = Token.objects.create(user=new_user)
         auth.login(request, new_user)
         return JsonResponse({"status":"True","message":f"welcome {username_} dear!", 'token':f'Token {token.key}'})
 
+class login(APIView):
+    @csrf_exempt
+    def post(self,request):
+        password_=request.POST["password"]
+        #if user enter email
+        if '@' in request.POST['usernameormail']:
+            myuser = User.objects.filter(email=request.POST['usernameormail'])[0]
+        #if user enter username
+        else:
+            myuser = User.objects.filter(username=request.POST['usernameormail'])[0]
+
+
+
+        if  myuser.check_password(password_) :
+            auth.login(request, myuser)
+            token = Token.objects.get(user=myuser)
+            return JsonResponse({'status':'success', 'token':f'Token {token.key}'})
+
+        elif not myuser:
+            return JsonResponse({'status':'fail' ,'message':'user not found'})
+        else:
+
+            return JsonResponse({'status':'fail','message':'wrong password'})
+
+
+class update_profile(APIView):
+    permission_classes=[IsAuthenticated]
+    @csrf_exempt
+
+    def post(self,req):
+        myuser=User.objects.filter(username=req.user.username)[0]
+        print(myuser.email)
+        try:
+            myuser.bio=req.POST["bio"]
+            myuser.save()
+        except:
+            pass
+        try:
+            myuser.image=req.FILES["image"]
+
+        except:
+            return Response({'status':'fail','message':'not change'})
+
+        return Response({'status':'true','message':'profile updated!'})
+
 
 class is_login(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    @csrf_exempt
+
     def get(self, req):
-        return Response({'status':'yes'})
+        if req.user.is_authenticated:
+            try:
+                return Response({'status':'true','username':req.user.username,'id':req.user.id,'bio':req.user.bio,'following_num':req.user.following.count(),'follower_num':req.user.followers.count(),'image':req.user.image.url})
+
+            except:
+                return Response({'status':'true','username':req.user.username,'id':req.user.id,'following_num':req.user.following.count(),'follower_num':req.user.followers.count()})
+        else:
+            return Response({"status":"fail"})
+
+
+class getprofile(APIView):
+    @csrf_exempt
+
+    def get(self,req):
+        return Response({'id':req.user.username,'bio':req.user.bio,'following_num':req.user.following.count(),'follower_num':req.user.followers.count(),'image':req.user.image.url})
+
+class getimage(APIView):
+    @csrf_exempt
+    def get(self,req):
+        return Response({'image':req.user.image.url})
+
+
+class getfollowers(APIView):
+    @csrf_exempt
+    def get(self,req):
+        followers=req.user.followers.all()
+
+        b=UserSerializer(followers,many=True)
+        return Response(b.data)
+
+
+
+class getfollowings(APIView):
+    @csrf_exempt
+
+    def get(self,req):
+        followings=req.user.following.all()
+        b=UserSerializer(followings,many=True)
+        return Response(b.data)
+
+
+
+class getsuggested(APIView):
+    @csrf_exempt
+
+    def post(self,req):
+        a=User.objects.filter(username=req.POST["username"])
+        # a=req.user.suggested()
+        b=UserSerializer(a,many=True)
+        return Response(b.data)
+
+class get_user_id(APIView):
+    @csrf_exempt
+    def post(self,req):
+        a=req.POST['id']
+        # n=User.objects.count()
+        try:
+            b=User.objects.get(id=a)
+            if b in req.user.following.all():
+                return Response({"isFollow":"true","username":b.username,"email":b.email,"image":b.image.url,'following_num':b.following.count(),'follower_num':b.followers.count()})
+            else:
+                return Response({"isFollow":"false","username":b.username,"email":b.email,"image":b.image.url,'following_num':b.following.count(),'follower_num':b.followers.count()})
+
+        except:
+
+            return Response({'status':'fail'})
+        
+
+# @csrf_exempt
+# # @api_view(('GET'))
+# def get_user_id(req):
+#     if req.method == 'GET':
+#         a=req.GET['id']
+#         try:
+#             b=User.objects.get(id=a)
+#             print(b)
+#             return HttpResponse(f"{"username":b.username,"email":b.email,"image":b.image.url}" status=200)
+#         except:
+#             return HttpResponse({'status':'fail'} status=400)
+            
+# # ffclass search(APIView):
+#     @csrf_exempt
+#     def(self,req):
+
+
 
 class getprofile(APIView):
     def get(self,req):
@@ -120,24 +298,6 @@ def resend_verification_code(req):
     recipient_list=[user[0].email],
     )
     return JsonResponse({'status':'success'})
-def login(request):
-    password_=request.POST["password"]
-    #if user enter email
-    if '@' in request.POST['usernameormail']:
-        user = User.objects.filter(email=request.POST['usernameormail'])
-    #if user enter username
-    else:
-        user = User.objects.filter(username=request.POST['usernameormail'])
-    if user and password_==user[0].password:
-        auth.login(request, user[0])
-        token = Token.objects.get(uesr=user[0])
-        return JsonResponse({'status':'success', 'token':f'Token {token.key}'})
-        
-    elif not user:
-        return JsonResponse({'status':'fail' ,'message':'user not found'})
-    else:
-
-        return JsonResponse({'status':'fail','message':'wrong password'})
 def forget_password(request):
     user = User.objects.filter(email=request.POST('email'))
     if not user:

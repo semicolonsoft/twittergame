@@ -3,11 +3,9 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    image = models.ImageField(upload_to='account/avatar/',null=True,)
+    image = models.ImageField(upload_to='account/avatar/',null=True,default='account/avatar/defult.jpg')
     bio = models.CharField(max_length=255, default=None, null=True)
     following=models.ManyToManyField('accounts.User',related_name='followers')
-
-
 
     def suggested(self):
         a=self.following.all()
@@ -29,14 +27,3 @@ class User(AbstractUser):
         return suggested
                 
                 
-
-
-
-
-
-
-
-    # def __str__(self):
-
-    #     return self.username
-
