@@ -18,6 +18,4 @@ urlpatterns = [
     path('forget_password', forget_password.as_view()),
     path('search', search.as_view()),
 
-
-
 ]

@@ -27,6 +27,7 @@ def random_string_generator(size=10, chars=string.ascii_lowercase + string.digit
 
 
 
+
 class follow(APIView):
     permission_classes = [IsAuthenticated]
     @csrf_exempt
@@ -216,6 +217,7 @@ class update_profile(APIView):
         myuser.save()
 
         return Response({'status':'true','message':'profile updated!'})
+
 
 class is_login(APIView):
     # permission_classes = [IsAuthenticated]
