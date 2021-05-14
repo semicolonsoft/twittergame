@@ -6,7 +6,10 @@ class User(AbstractUser):
     image = models.ImageField(upload_to='account/avatar/',null=True,default='account/avatar/defult.jpg')
     bio = models.CharField(max_length=255, default=None, null=True)
     following=models.ManyToManyField('accounts.User',related_name='followers')
-
+    verified_email = models.BooleanField(default=False)
+    verification_code = models.IntegerField(null=True, blank=True)
+    verification_code_time = models.DateTimeField(null=True, blank=True)
+    
     def suggested(self):
         a=self.following.all()
         

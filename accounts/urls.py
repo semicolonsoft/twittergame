@@ -13,9 +13,10 @@ urlpatterns = [
     path('getfollowings', getfollowings.as_view()),
     path('getsuggested', getsuggested.as_view()),
     path('get_user_id', get_user_id.as_view()),
-
+    path('verify_code', verify_code.as_view()),
+    path('resend_verification_code', resend_verification_code.as_view()),
+    path('forget_password', forget_password.as_view()),
     path('search', search.as_view()),
-
 
 
 
