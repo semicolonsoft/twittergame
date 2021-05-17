@@ -63,11 +63,11 @@ class search(APIView):
             result=UserSerializer(res,many=True)
             if len(res)>int(page_size):
                 try:
-                    return Response(result.data[(int(page_size))*(int(page_num)-1):(int(page_size))*(int(page_num))])
+                    return Response({'pages':f"{len(res)}" ,'result':result.data[(int(page_size))*(int(page_num)-1):(int(page_size))*(int(page_num))]})
                 except:
                     return Response({"status":"fail","message":"wronge page size and number"})
             elif len(res)!=0 and len(res)<int(page_size) :
-                return Response(result.data[:])
+                return Response({'pages':f"{len(res)}" ,'result':result.data[:]})
             return Response({"status":"fail","message":"there is not any user"})
         return Response({'status':'fail','message':'type not user'})
 
@@ -90,14 +90,14 @@ class register(APIView):
         new_user=User(username=username_,email=email_)
         new_user.set_password(password_)
 
-    #     new_user.verification_code = random.randint(10000, 99999)
-    #     new_user.verification_code_time = timezone.now()
-    #     send_mail(
-    #         subject='A Cool Name account verification',
-    #         message=f'your code to verify email : {new_user.verification_code}',
-    #         from_email=settings.EMAIL_HOST_USER,
-    #         recipient_list=[new_user.email],
-    # )
+        new_user.verification_code = random.randint(10000, 99999)
+        new_user.verification_code_time = timezone.now()
+        send_mail(
+            subject='A Cool Name account verification',
+            message=f'hi {new_user.username} your code to verify email : {new_user.verification_code}',
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[new_user.email],
+    )
 
         try:
             new_user.image = request.FILES['image']
@@ -145,7 +145,7 @@ class resend_verification_code(APIView):
         user[0].save()
         send_mail(
         subject='A Cool Name account verification',
-        message=f'your code to verify email : {user[0].verification_code}',
+        message=f' hi {user[0].username}  your code to verify email : {user[0].verification_code}',
         from_email=settings.EMAIL_HOST_USER,
         recipient_list=[user[0].email],
         )
