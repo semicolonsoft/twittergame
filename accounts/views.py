@@ -61,13 +61,14 @@ class search(APIView):
             myfilter=(Q(username__contains=serachfield)| Q(email__contains=serachfield)|Q(first_name__contains=serachfield)|Q(last_name__contains=serachfield))
             res=User.objects.complex_filter(myfilter)
             result=UserSerializer(res,many=True)
-            if len(res)>int(page_size):
+
+            if len(res)>=int(page_size):
                 try:
-                    return Response({'pages':f"{len(res)}" ,'result':result.data[(int(page_size))*(int(page_num)-1):(int(page_size))*(int(page_num))]})
+                    return Response({'pages':f"{(len(res)//int(page_size))+1}" ,'result':result.data[(int(page_size))*(int(page_num)-1):(int(page_size))*(int(page_num))]})
                 except:
                     return Response({"status":"fail","message":"wronge page size and number"})
             elif len(res)!=0 and len(res)<int(page_size) :
-                return Response({'pages':f"{len(res)}" ,'result':result.data[:]})
+                return Response({'pages':f"{(len(res)//page_size)+1}" ,'result':result.data[:]})
             return Response({"status":"fail","message":"there is not any user"})
         return Response({'status':'fail','message':'type not user'})
 
