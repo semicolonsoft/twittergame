@@ -156,14 +156,19 @@ class resend_verification_code(APIView):
 class forget_password(APIView):
     @csrf_exempt
     def post(self,request):
-        user = User.objects.filter(email=request.POST('email'))
+        if '@' in request.POST['usernameormail']:
+            user = User.objects.filter(email=request.POST['usernameormail'])[0]
+        #if user enter username
+        else:
+            user = User.objects.filter(username=request.POST['usernameormail'])[0]
+
+
         if not user:
             return JsonResponse({'status':'failed', 'error':'invalid email'})
-        user = user[0]
         new_password = random_string_generator()
         user.set_password(new_password)
         send_mail(
-            subject='A Cool Name forget password',
+            subject=' forget password',
             message=f'your new password is :  {new_password}   ""Please set new password after login!""',
             from_email=settings.EMAIL_HOST_USER,
             recipient_list=[user.email],
@@ -208,10 +213,6 @@ class logout(APIView):
 
         return JsonResponse({'status': 'success'})
 
-
-
-
-
 class update_profile(APIView):
     permission_classes=[IsAuthenticated]
     @csrf_exempt
@@ -234,7 +235,6 @@ class update_profile(APIView):
         myuser.save()
 
         return Response({'status':'true','message':'profile updated!'})
-
 
 class is_login(APIView):
     # permission_classes = [IsAuthenticated]
