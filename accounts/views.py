@@ -93,12 +93,12 @@ class register(APIView):
 
         new_user.verification_code = random.randint(10000, 99999)
         new_user.verification_code_time = timezone.now()
-        send_mail(
-            subject='A Cool Name account verification',
-            message=f'hi {new_user.username} your code to verify email : {new_user.verification_code}',
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[new_user.email],
-    )
+    #     send_mail(
+    #         subject='A Cool Name account verification',
+    #         message=f'hi {new_user.username} your code to verify email : {new_user.verification_code}',
+    #         from_email=settings.EMAIL_HOST_USER,
+    #         recipient_list=[new_user.email],
+    # )
 
         try:
             new_user.image = request.FILES['image']
@@ -113,7 +113,7 @@ class register(APIView):
         new_user.save()
         token = Token.objects.create(user=new_user)
         auth.login(request, new_user)
-        return JsonResponse({"status":"True","message":f"welcome {username_} dear!", 'token':f'Token {token.key}'})
+        return JsonResponse({"status":"True","message":f"welcome dear {username_}!", 'token':f'Token {token.key}'})
 
 class verify_code(APIView):
     @csrf_exempt

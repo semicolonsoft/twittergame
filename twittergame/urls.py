@@ -18,10 +18,25 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from . import settings
 
+from rest_framework import routers
+from RecommendPost.views import seenPostClassViewSet
+from Post import views
+from Post.views import Posts
+from Post.views import Replays
+from Post.views import Like
+
+router = routers.DefaultRouter()
+router.register(r'postClass', views.postClassViewSet)
+router.register(r'replayClass', views.replayClassViewSet)
+router.register(r'likesClass', views.likesClassViewSet)
+router.register(r'RecommendPostClass', seenPostClassViewSet)
+
 urlpatterns = [
+    path('', include(router.urls)),
     path('admin/', admin.site.urls),
     path('account/', include('accounts.urls')),
     path('Post/', include('Post.urls')),
+    path('RecommendPost/', include('RecommendPost.urls')),
     path('GameBar/', include('GameBar.urls')),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     
