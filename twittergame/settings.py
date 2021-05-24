@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'Post',
     'GameBar',
+    'news',
 
 ]
 CORS_ALLOWED_ORIGINS = [
