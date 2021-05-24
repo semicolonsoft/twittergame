@@ -196,6 +196,22 @@ class login(APIView):
 
             return JsonResponse({'status':'fail','message':'wrong password'})
 
+class logout(APIView):
+    @csrf_exempt
+    def get(self,req):
+        if not req.user.is_authenticated:
+            return JsonResponse({'status':'failed', 'error':'AnonymousUser'})
+
+        token1=Token.objects.get(user=req.user)
+        token1.delete()
+        token2=Token.objects.create(user=req.user)
+
+        return JsonResponse({'status': 'success'})
+
+
+
+
+
 class update_profile(APIView):
     permission_classes=[IsAuthenticated]
     @csrf_exempt

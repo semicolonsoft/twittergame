@@ -17,5 +17,7 @@ urlpatterns = [
     path('resend_verification_code', resend_verification_code.as_view()),
     path('forget_password', forget_password.as_view()),
     path('search', search.as_view()),
+    path('logout', logout.as_view()),
+
 
 ]
