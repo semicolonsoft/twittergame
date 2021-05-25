@@ -4,5 +4,5 @@ from . models import seenPostClass
 class seenPostClassSerializer(serializers.HyperlinkedModelSerializer):
     class Meta :
         model = seenPostClass
-        fields = ('UserName' ,'PostId' , 'date' )
+        fields = ('UserName' ,'PostId' , 'date' , 'beDelete')
 

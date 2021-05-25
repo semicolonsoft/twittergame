@@ -5,6 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from django.http import HttpResponse
 from rest_framework.response import Response
+from datetime import datetime
 
 from .serializers import seenPostClassSerializer
 from .models import seenPostClass
@@ -45,10 +46,24 @@ def RecomPost(request):
 @csrf_exempt
 @api_view(('GET','DELETE','POST'))
 def SendRecomPost(request):
+
+    now = datetime.now()
+    count = seenPostClass.objects.all().count()
+    hold = seenPostClass.objects.all()
+    for x in range (count):
+        Date = hold[x].date
+        if ((int(now.strftime("%j")) >= int(Date.strftime("%j")) + 14) &
+         (int(now.strftime("%Y")) == int(Date.strftime("%Y")))): 
+            obj = hold[x]
+            obj.beDelete = 1
+            obj.save()
+    for x in range(count):
+        seenPostClass.objects.filter(beDelete = 1).delete()
+            
+
     A = 7 #followers RecommendPost Numbers
     B = 2 #most likes post Numbers
     C = 2 #followers of followers RecommendPost Numbers
-    seenPostClass.objects.all().delete()
 
     if request.method == 'GET':
         userCount = request.user.followers.all().count()
@@ -59,14 +74,18 @@ def SendRecomPost(request):
             try:
                 hold = followers[y]
                 count = postClass.objects.filter(UserName = hold).count()
-                for x in range(count) : 
+                for x in range(count) :     
                     if seenPostClass.objects.filter(PostId = postClass.objects.filter(UserName = hold)[x].postId,UserName = request.user).count() == 0:
-                        arr.insert(0,[postClass.objects.filter(UserName = hold)[x].date,postClass.objects.filter(UserName = hold)[x].postId])
+                        holdDate = postClass.objects.all()[x].date
+                        if((int(now.strftime("%j")) <= int(holdDate.strftime("%j")) + 14) &
+                         (int(now.strftime("%Y")) == int(holdDate.strftime("%Y")))):
+                            arr.insert(0,[postClass.objects.filter(UserName = hold)[x].date,postClass.objects.filter(UserName = hold)[x].postId])
                     elif(True):
                         count += 1
             except:
                 print("handel 1")
         arr.sort()
+        print(arr)
         if len(arr) < A :
             B += A - len(arr)
             A= len(arr)
@@ -74,8 +93,6 @@ def SendRecomPost(request):
             snippets = postClass.objects.filter(postId=arr[x][1])
             serializer = postClassSerializer(snippets, many=True)
             array.insert(0,serializer.data)
-            # Obj = seenPostClass(PostId = arr[x][1],UserName = request.user)
-            # Obj.save()
 
         arr.clear()
         holdCount = postClass.objects.all().count()
@@ -83,7 +100,10 @@ def SendRecomPost(request):
             try:
                 hold = postClass.objects.all()[x].like
                 if seenPostClass.objects.filter(PostId = postClass.objects.all()[x].postId,UserName = request.user).count() == 0:
-                    arr.insert(0,[hold,postClass.objects.all()[x].postId])
+                    holdDate = postClass.objects.all()[x].date
+                    if((int(now.strftime("%j")) <= int(holdDate.strftime("%j")) + 14) &
+                     (int(now.strftime("%Y")) == int(holdDate.strftime("%Y")))):
+                        arr.insert(0,[hold,postClass.objects.all()[x].postId])
                 elif(True):
                     holdCount += 1
             except:   
@@ -97,8 +117,6 @@ def SendRecomPost(request):
             snippets = postClass.objects.filter(postId=arr[x][1])
             serializer = postClassSerializer(snippets, many=True)
             array.insert(0,serializer.data)
-            # Obj = seenPostClass(PostId = arr[x][1],UserName = request.user)
-            # Obj.save()
 
         arr.clear()
         followersF = []
@@ -110,12 +128,15 @@ def SendRecomPost(request):
                 count = postClass.objects.filter(UserName = hold).count()
                 for z in range(count) : 
                     try:
-                        if seenPostClass.objects.filter(PostId = postClass.objects.filter(UserName = hold)[x].postId,UserName = request.user).count() == 0:
-                            arr.insert(0,[postClass.objects.filter(UserName = hold)[z].date,postClass.objects.filter(UserName = hold)[z].postId])
+                        if seenPostClass.objects.filter(PostId = postClass.objects.filter(UserName = hold)[z].postId,UserName = request.user).count() == 0:
+                            holdDate = postClass.objects.all()[z].date
+                            if((int(now.strftime("%j")) <= int(holdDate.strftime("%j")) + 14) &
+                             (int(now.strftime("%Y")) >= int(holdDate.strftime("%Y")))):
+                                arr.insert(0,[postClass.objects.filter(UserName = hold)[z].date,postClass.objects.filter(UserName = hold)[z].postId])
                         elif(True):
                             count += 1
                     except:
-                        print("handel 3")
+                        print("handel 3")   
         arr.sort()
         if len(arr) < C :
             C = len(arr)
@@ -123,8 +144,6 @@ def SendRecomPost(request):
             snippets = postClass.objects.filter(postId=arr[x][1])
             serializer = postClassSerializer(snippets, many=True)
             array.insert(0,serializer.data)
-            # Obj = seenPostClass(PostId = arr[x][1],UserName = request.user)
-            # Obj.save()
 
 
         return Response(array)  
