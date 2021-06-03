@@ -22,8 +22,8 @@ class seenPostClassViewSet(viewsets.ModelViewSet):
 @api_view(('GET','DELETE','POST'))
 def RecomPost(request):
 
-    # if(request.user.is_anonymous):
-    #     return HttpResponse("you have to login first!",status=403)
+    if(request.user.is_anonymous):
+        return HttpResponse("you have to login first!",status=403)
 
     if request.method == 'POST':
         mainPostId = request.POST['PostId']
@@ -45,6 +45,10 @@ def RecomPost(request):
 @csrf_exempt
 @api_view(('GET','DELETE','POST'))
 def SendRecomPost(request):
+
+    if(request.user.is_anonymous):
+        return HttpResponse("you have to login first!",status=403)
+
     A = 7 #followers RecommendPost Numbers
     B = 2 #most likes post Numbers
     C = 2 #followers of followers RecommendPost Numbers

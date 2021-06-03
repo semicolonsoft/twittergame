@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'accounts',
     'corsheaders',
     'Post',
+    'RecommendPost',
     'GameBar',
     'news',
 
