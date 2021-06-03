@@ -5,4 +5,5 @@ urlpatterns = [
     path('Posts', Posts),
     path('Replays', Replays),
     path('Like', Like),
+    path('ExtLike', ExtLike),
 ]
