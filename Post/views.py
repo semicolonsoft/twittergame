@@ -17,7 +17,8 @@ from .models import postClass
 
 from .serializers import replayClassSerializer
 from .models import replayClass
-from rest_framework.views import APIView
+
+# from rest_framework.views import APIView
 
 
 class likesClassViewSet(viewsets.ModelViewSet):
@@ -36,9 +37,8 @@ class replayClassViewSet(viewsets.ModelViewSet):
 @api_view(('GET','DELETE','PATCH','POST'))
 def Posts(request):
 
-
-    if(request.user.is_anonymous):
-        return HttpResponse("you have to login first!",status=403)
+    # if(request.user.is_anonymous):
+    #     return HttpResponse("you have to login first!",status=403)
 
     if request.method == 'POST':
         messageTxt = request.POST["message"]
@@ -54,7 +54,7 @@ def Posts(request):
                         return HttpResponse("File too large. Size should not exceed 5 MB.",status=403)
                     elif(len(Image.open(imageFile).fp.read()) < 10000):
                         return HttpResponse("The size should not be less than 10 KB",status=403)
-                    Obj = postClass(message = messageTxt,UserName=request.user,image = imageFile)
+                    Obj = postClass(message = messageTxt,UserName=request.user,image = imageFile,like = 0)
                     Obj.save()
 
             except:
@@ -93,30 +93,12 @@ def Posts(request):
             return HttpResponse("EDIT was successful!",status=200)
         return HttpResponse("Does not exist",status=400)
 
-# class readtwitt(APIView):
-#     @csrf_exempt
-#     def get(self,req):
-#         if(req.user.is_anonymous):
-#             return HttpResponse("you have to login first!",status=403)
-
-#         myuser=req.user.following.all()
-#         print(postClass.objects.filter(UserName__in=myuser).count())
-#         if(postClass.objects.filter(UserName__in=myuser).count() != 0):
-
-#             snippets = postClass.objects.filter(UserName__in=myuser)
-#             print(snippets,type(snippets))
-#             serializer = postClassSerializer(snippets, many=True)
-#             return Response(serializer.data)
-
-#         return HttpResponse("Does not exist",status=400)
-
-
 @csrf_exempt
 @api_view(('GET','DELETE','POST'))
 def Replays(request):
 
-    if(request.user.is_anonymous):
-        return HttpResponse("you have to login first!",status=403)
+    # if(request.user.is_anonymous):
+    #     return HttpResponse("you have to login first!",status=403)
 
     if request.method == 'POST':
         mainPostId = request.POST['mainPost']
@@ -157,16 +139,20 @@ def Replays(request):
 @api_view(('GET','DELETE','POST'))
 def Like(request):
 
-    if(request.user.is_anonymous):
-        return HttpResponse("you have to login first!",status=403)
+    # if(request.user.is_anonymous):
+    #     return HttpResponse("you have to login first!",status=403)
 
     if request.method == 'POST':
         mainPostId = request.POST['PostId']
-        if(likesClass.objects.filter(PostId=mainPostId).count() != 0):
+        if(likesClass.objects.filter(PostId=mainPostId).filter(UserName = request.user).count() != 0):
             return HttpResponse("You liked this photo before!",status=403)
 
         Obj = likesClass(PostId = mainPostId,UserName = request.user)
         Obj.save()
+        hold = postClass.objects.get(postId = mainPostId)
+        hold.like += 1
+        hold.save()
+        postClass.objects.filter(postId = mainPostId).like = 1
         return HttpResponse("POST was successful!",status=200)
 
     elif request.method == 'GET':
@@ -182,10 +168,34 @@ def Like(request):
     elif request.method == 'DELETE':
         mainPostId = request.POST['PostId']
         if(likesClass.objects.filter(PostId = mainPostId).count() != 0):
-            if(likesClass.objects.filter(PostId = mainPostId).filter(UserName = user).count() == 0):
+            if(likesClass.objects.filter(PostId = mainPostId).filter(UserName = request.user).count() == 0):
                 return HttpResponse("You can only delete your own likes!",status=401)
-            likesClass.objects.filter(PostId = mainPostId).filter(UserName = user).delete()
+            likesClass.objects.filter(PostId = mainPostId).filter(UserName = request.user).delete()
+            hold = postClass.objects.get(postId = mainPostId)
+            hold.like -= 1
+            hold.save()
             return HttpResponse("DELETE was successful!",status=200)
         return HttpResponse("Does not exist",status=400)
+
+
+
+# class readtwitt(APIView):
+#     @csrf_exempt
+#     def get(self,req):
+#         if(req.user.is_anonymous):
+#             return HttpResponse("you have to login first!",status=403)
+
+#         myuser=req.user.following.all()
+#         print(postClass.objects.filter(UserName__in=myuser).count())
+#         if(postClass.objects.filter(UserName__in=myuser).count() != 0):
+
+#             snippets = postClass.objects.filter(UserName__in=myuser)
+#             print(snippets,type(snippets))
+#             serializer = postClassSerializer(snippets, many=True)
+#             return Response(serializer.data)
+
+#         return HttpResponse("Does not exist",status=400)
+
+
 
              

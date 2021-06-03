@@ -7,7 +7,7 @@ from .models import likesClass
 class postClassSerializer(serializers.HyperlinkedModelSerializer):
     class Meta :
         model = postClass
-        fields = ('message', 'postId' , 'date' ,'UserName','image')
+        fields = ('message', 'postId' , 'date' ,'UserName','image','like')
 
 class replayClassSerializer(serializers.HyperlinkedModelSerializer):
     class Meta :
