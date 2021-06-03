@@ -37,8 +37,8 @@ class replayClassViewSet(viewsets.ModelViewSet):
 @api_view(('GET','DELETE','PATCH','POST'))
 def Posts(request):
 
-    # if(request.user.is_anonymous):
-    #     return HttpResponse("you have to login first!",status=403)
+    if(request.user.is_anonymous):
+        return HttpResponse("you have to login first!",status=403)
 
     if request.method == 'POST':
         messageTxt = request.POST["message"]
@@ -97,8 +97,8 @@ def Posts(request):
 @api_view(('GET','DELETE','POST'))
 def Replays(request):
 
-    # if(request.user.is_anonymous):
-    #     return HttpResponse("you have to login first!",status=403)
+    if(request.user.is_anonymous):
+        return HttpResponse("you have to login first!",status=403)
 
     if request.method == 'POST':
         mainPostId = request.POST['mainPost']
@@ -139,13 +139,17 @@ def Replays(request):
 @api_view(('GET','DELETE','POST'))
 def Like(request):
 
-    # if(request.user.is_anonymous):
-    #     return HttpResponse("you have to login first!",status=403)
+    if(request.user.is_anonymous):
+        return HttpResponse("you have to login first!",status=403)
 
     if request.method == 'POST':
         mainPostId = request.POST['PostId']
         if(likesClass.objects.filter(PostId=mainPostId).filter(UserName = request.user).count() != 0):
-            return HttpResponse("You liked this photo before!",status=403)
+            likesClass.objects.filter(PostId = mainPostId).filter(UserName = request.user).delete()
+            hold = postClass.objects.get(postId = mainPostId)
+            hold.like -= 1
+            hold.save()
+            return HttpResponse("DELETE was successful!",status=200)
 
         Obj = likesClass(PostId = mainPostId,UserName = request.user)
         Obj.save()
@@ -176,6 +180,18 @@ def Like(request):
             hold.save()
             return HttpResponse("DELETE was successful!",status=200)
         return HttpResponse("Does not exist",status=400)
+
+def ExtLike(request):
+
+    if(request.user.is_anonymous):
+        return HttpResponse("you have to login first!",status=403)
+
+    if request.method == 'GET':
+        mainPostId = request.POST["PostId"]
+        if(likesClass.objects.filter(PostId=mainPostId).filter(UserName = request.user).count() != 0):
+            return HttpResponse("You liked this post,before!",status=200)
+        return HttpResponse("You did not like this photo before",status=200)
+    
 
 
 
