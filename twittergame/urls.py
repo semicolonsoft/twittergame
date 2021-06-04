@@ -22,6 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('account/', include('accounts.urls')),
     path('Post/', include('Post.urls')),
+    path('Archive/', include('Archive.urls')),
     path('RecommendPost/', include('RecommendPost.urls')),
     path('GameBar/', include('GameBar.urls')),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
