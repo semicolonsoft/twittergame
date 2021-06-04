@@ -98,7 +98,7 @@ class register(APIView):
             message=f'hi {new_user.username} your code to verify email : {new_user.verification_code}',
             from_email=settings.EMAIL_HOST_USER,
             recipient_list=[new_user.email],
-    )
+    ) #hide this lines for running in local!
 
         try:
             new_user.image = request.FILES['image']

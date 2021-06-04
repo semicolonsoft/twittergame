@@ -2,9 +2,7 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth import authenticate
 from rest_framework.response import Response
-from rest_framework import status
 from rest_framework.decorators import api_view
 from PIL import Image
 
@@ -63,7 +61,7 @@ def Posts(request):
         return HttpResponse("POST was successful!",status=200)
 
     elif request.method == 'GET':
-        User = request.GET["UserName"]
+        User = request.POST["UserName"]
         if(postClass.objects.filter(UserName=User).count() != 0):
 
             snippets = postClass.objects.filter(UserName=User).order_by('date').reverse()
@@ -187,7 +185,6 @@ def ExtLike(request):
 
     if(request.user.is_anonymous):
         return HttpResponse("you have to login first!",status=403)
-
 
     if request.method == 'GET':
         mainPostId = request.POST["PostId"]

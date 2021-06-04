@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'Post',
     'RecommendPost',
     'GameBar',
+    'Archive',
     'news',
 
 ]
