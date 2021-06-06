@@ -34,7 +34,7 @@ def RecomPost(request):
         return HttpResponse("POST was successful!",status=200)
 
     elif request.method == 'GET':
-        mainPostId = request.POST["PostId"]
+        mainPostId = request.GET["PostId"]
         if(seenPostClass.objects.filter(PostId=mainPostId).count() != 0):
             snippets = seenPostClass.objects.filter(UserName = request.user)
             serializer = seenPostClassSerializer(snippets, many=True)

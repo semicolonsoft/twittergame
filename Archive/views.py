@@ -35,7 +35,7 @@ def ArchivePost(request):
             return HttpResponse("You cant Save a post,Twice!",status=400)
 
     elif request.method == 'GET':
-        option = request.POST["Option"]
+        option = request.GET["Option"]
         if(option == "1"):
             if(archivePostClass.objects.filter(UserName=request.user).count() != 0):
 
