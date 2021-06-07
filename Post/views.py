@@ -158,7 +158,7 @@ def Like(request):
         return HttpResponse("POST was successful!",status=200)
 
     elif request.method == 'GET':
-        mainPostId = request.POST["PostId"]
+        mainPostId = request.GET["PostId"]
         if(likesClass.objects.filter(PostId=mainPostId).count() != 0):
             snippets = likesClass.objects.filter(PostId=mainPostId)
             serializer = likesClassSerializer(snippets, many=True)
