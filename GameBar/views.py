@@ -32,7 +32,7 @@ def GameRec(request):
         return HttpResponse("POST was successful!",status=200)
 
     elif request.method == 'GET':
-        user = request.POST["UserName"]
+        user = request.GET["UserName"]
         if(gameRecClass.objects.filter(UserName=user).count() != 0):
             snippets = gameRecClass.objects.filter(UserName=user)
             serializer = gameRecClassSerializer(snippets, many=True)

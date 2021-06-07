@@ -61,7 +61,7 @@ def Posts(request):
         return HttpResponse("POST was successful!",status=200)
 
     elif request.method == 'GET':
-        User = request.POST["UserName"]
+        User = request.GET["UserName"]
         if(postClass.objects.filter(UserName=User).count() != 0):
 
             snippets = postClass.objects.filter(UserName=User).order_by('date').reverse()
@@ -114,7 +114,7 @@ def Replays(request):
         return HttpResponse("POST was successful!",status=200)
 
     elif request.method == 'GET':
-        mainPostId = request.POST["mainPost"]
+        mainPostId = request.GET["mainPost"]
         if(replayClass.objects.filter(mainPost=mainPostId).count() != 0):
             snippets = replayClass.objects.filter(mainPost=mainPostId)
             serializer = replayClassSerializer(snippets, many=True)
@@ -158,7 +158,7 @@ def Like(request):
         return HttpResponse("POST was successful!",status=200)
 
     elif request.method == 'GET':
-        mainPostId = request.POST["PostId"]
+        mainPostId = request.GET["PostId"]
         if(likesClass.objects.filter(PostId=mainPostId).count() != 0):
             snippets = likesClass.objects.filter(PostId=mainPostId)
             serializer = likesClassSerializer(snippets, many=True)
@@ -187,7 +187,7 @@ def ExtLike(request):
         return HttpResponse("you have to login first!",status=403)
 
     if request.method == 'GET':
-        mainPostId = request.POST["PostId"]
+        mainPostId = request.GET["PostId"]
         if(likesClass.objects.filter(PostId=mainPostId).filter(UserName = request.user).count() != 0):
             return HttpResponse("You liked this photo before!",status=200)
         return HttpResponse("You didnt like this photo before!",status=200)
