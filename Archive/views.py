@@ -45,7 +45,7 @@ def ArchivePost(request):
             return HttpResponse("Does not exist",status=400)
 
         elif(option == "2"):
-            collection = request.POST["Collection"]
+            collection = request.GET["Collection"]
             if(archivePostClass.objects.filter(UserName=request.user).filter(Collection = collection).count() != 0):
                 snippets = archivePostClass.objects.filter(UserName=request.user).filter(Collection = collection).reverse()
                 serializer = archivePostClassSerializer(snippets, many=True)
