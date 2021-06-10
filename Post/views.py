@@ -16,7 +16,6 @@ from .models import postClass
 from .serializers import replayClassSerializer
 from .models import replayClass
 
-# from rest_framework.views import APIView
 
 
 class likesClassViewSet(viewsets.ModelViewSet):
@@ -142,20 +141,23 @@ def Like(request):
 
     if request.method == 'POST':
         mainPostId = request.POST['PostId']
-        if(likesClass.objects.filter(PostId=mainPostId).filter(UserName = request.user).count() != 0):
-            likesClass.objects.filter(PostId = mainPostId).filter(UserName = request.user).delete()
+        try :
+            if(likesClass.objects.filter(PostId=mainPostId).filter(UserName = request.user).count() != 0):
+                likesClass.objects.filter(PostId = mainPostId).filter(UserName = request.user).delete()
+                hold = postClass.objects.get(postId = mainPostId)
+                hold.like -= 1
+                hold.save()
+                return HttpResponse("DELETE was successful!",status=200)
+            
+            Obj = likesClass(PostId = mainPostId,UserName = request.user)
+            Obj.save()
             hold = postClass.objects.get(postId = mainPostId)
-            hold.like -= 1
+            hold.like += 1
             hold.save()
-            return HttpResponse("DELETE was successful!",status=200)
-
-        Obj = likesClass(PostId = mainPostId,UserName = request.user)
-        Obj.save()
-        hold = postClass.objects.get(postId = mainPostId)
-        hold.like += 1
-        hold.save()
-        postClass.objects.filter(postId = mainPostId).like = 1
-        return HttpResponse("POST was successful!",status=200)
+            postClass.objects.filter(postId = mainPostId).like = 1
+            return HttpResponse("POST was successful!",status=200)
+        except :
+            return HttpResponse("This PostId isn't exist!",status=400)
 
     elif request.method == 'GET':
         mainPostId = request.GET["PostId"]
@@ -164,7 +166,7 @@ def Like(request):
             serializer = likesClassSerializer(snippets, many=True)
             return Response(serializer.data)
         elif(True):
-            return HttpResponse("Does not exist",status=400)
+            return HttpResponse([],status=204)
 
     
     elif request.method == 'DELETE':
@@ -189,30 +191,10 @@ def ExtLike(request):
     if request.method == 'GET':
         mainPostId = request.GET["PostId"]
         if(likesClass.objects.filter(PostId=mainPostId).filter(UserName = request.user).count() != 0):
-            return HttpResponse("You liked this photo before!",status=200)
-        return HttpResponse("You didnt like this photo before!",status=200)
+            return HttpResponse(True,status=200)
+        return HttpResponse(False,status=200)
 
     
-
-
-
-# class readtwitt(APIView):
-#     @csrf_exempt
-#     def get(self,req):
-#         if(req.user.is_anonymous):
-#             return HttpResponse("you have to login first!",status=403)
-
-#         myuser=req.user.following.all()
-#         print(postClass.objects.filter(UserName__in=myuser).count())
-#         if(postClass.objects.filter(UserName__in=myuser).count() != 0):
-
-#             snippets = postClass.objects.filter(UserName__in=myuser)
-#             print(snippets,type(snippets))
-#             serializer = postClassSerializer(snippets, many=True)
-#             return Response(serializer.data)
-
-#         return HttpResponse("Does not exist",status=400)
-
 
 
              
