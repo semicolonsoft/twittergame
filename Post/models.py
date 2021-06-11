@@ -20,6 +20,7 @@ class postClass(models.Model) :
 
 class replayClass(models.Model):
     UserName = models.CharField(max_length=40,unique=False,default="None")
+    message = models.CharField(max_length = 200,null = True,blank = False)
     mainPost = models.IntegerField()
     subPost = models.IntegerField()
 

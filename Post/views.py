@@ -55,7 +55,7 @@ def Posts(request):
                     Obj.save()
 
             except:
-                Obj = postClass(message = messageTxt,UserName=request.user)
+                Obj = postClass(message = messageTxt,UserName=request.user,like = 0)
                 Obj.save()
         return HttpResponse("POST was successful!",status=200)
 
@@ -99,7 +99,11 @@ def Replays(request):
 
     if request.method == 'POST':
         mainPostId = request.POST['mainPost']
-        subPostId = request.POST['subPost']
+        messageTxt = request.POST["message"]
+        Obj = postClass(message = messageTxt,UserName=request.user,like = 0)
+        Obj.save()
+        
+        subPostId = Obj.postId
         if(postClass.objects.filter(postId=mainPostId).count() == 0):
             if(postClass.objects.filter(postId=subPostId).count() == 0):
                 return HttpResponse("mainPostId & subPostId not exist",status=400)
@@ -108,7 +112,7 @@ def Replays(request):
         elif(postClass.objects.filter(postId=subPostId).count() == 0):
             return HttpResponse("subPostId not exist",status=400)
 
-        Obj = replayClass(mainPost = mainPostId,subPost = subPostId,UserName=request.user)
+        Obj = replayClass(mainPost = mainPostId,subPost = subPostId,UserName=request.user,message = messageTxt)
         Obj.save()
         return HttpResponse("POST was successful!",status=200)
 
