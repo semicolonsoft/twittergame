@@ -13,7 +13,6 @@ from django.core import serializers
 from .serializers import UserSerializer
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
-from django.http import HttpResponse
 from django.db.models import Q
 from django.core.mail import send_mail
 from  django.utils import timezone
@@ -23,8 +22,6 @@ import random,string
 
 def random_string_generator(size=10, chars=string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
-
-
 
 
 
@@ -93,12 +90,12 @@ class register(APIView):
 
         new_user.verification_code = random.randint(10000, 99999)
         new_user.verification_code_time = timezone.now()
-        send_mail(
-            subject='A Cool Name account verification',
-            message=f'hi {new_user.username} your code to verify email : {new_user.verification_code}',
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[new_user.email],
-    ) #hide this lines for running in local!
+    #     send_mail(
+    #         subject='A Cool Name account verification',
+    #         message=f'hi {new_user.username} your code to verify email : {new_user.verification_code}',
+    #         from_email=settings.EMAIL_HOST_USER,
+    #         recipient_list=[new_user.email],
+    # ) #hide this lines for running in local!
 
         try:
             new_user.image = request.FILES['image']
