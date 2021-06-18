@@ -91,12 +91,12 @@ class register(APIView):
 
         new_user.verification_code = random.randint(10000, 99999)
         new_user.verification_code_time = timezone.now()
-    #     send_mail(
-    #         subject='A Cool Name account verification',
-    #         message=f'hi {new_user.username} your code to verify email : {new_user.verification_code}',
-    #         from_email=settings.EMAIL_HOST_USER,
-    #         recipient_list=[new_user.email],
-    # ) #hide this lines for running in local!
+        send_mail(
+            subject='A Cool Name account verification',
+            message=f'hi {new_user.username} your code to verify email : {new_user.verification_code}',
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[new_user.email],
+    ) #hide this lines for running in local!
 
         try:
             new_user.image = request.FILES['image']
