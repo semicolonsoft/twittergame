@@ -9,7 +9,6 @@ class User(AbstractUser):
     verified_email = models.BooleanField(default=False)
     verification_code = models.IntegerField(null=True, blank=True)
     verification_code_time = models.DateTimeField(null=True, blank=True)
-    GoogleAcc = models.BooleanField(default=False)
     
     def suggested(self):
         a=self.following.all()
