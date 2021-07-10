@@ -7,7 +7,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
-
+from django.forms.models import model_to_dict
+from django.core import serializers
 
 class follow(APIView):
     permission_classes = [IsAuthenticated]
@@ -45,11 +46,48 @@ class register(APIView):
         auth.login(request, new_user)
         return JsonResponse({"status":"True","message":f"welcome {username_} dear!", 'token':f'Token {token.key}'})
 
-###############33
+
 class is_login(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, req):
         return Response({'status':'yes'})
+
+class getprofile(APIView):
+    def get(self,req):
+        return Response({'id':req.user.username,'bio':req.user.bio,'following_num':req.user.following.count(),'follower_num':req.user.followers.count()})
+
+class getimage(APIView):
+    def get(self,req):
+        return Response({'image':req.user.image.url})
+
+
+class getfollowers(APIView):
+    def get(self,req):
+
+        followers=req.user.followers.all()
+        f=serializers.serialize('json', followers)
+
+        # f=list(followers)
+        # print(f)
+        return Response({'followers':f})
+
+
+class getfollowings(APIView):
+    def get(self,req):
+        followings=req.user.following.all()
+        f=serializers.serialize('json', followings)
+        return Response({'followings':f})
+
+
+class getsuggested(APIView):
+    def get(self,req):
+        # f=serializers.serialize('json', req.user.suggested)
+        print(req.user.suggested)
+        return Response({'suggested':"soon api make"})
+
+
+
+
 
 
 def verify_code(req):
@@ -68,8 +106,6 @@ def verify_code(req):
         auth.login(req, user[0])
         return JsonResponse({'status':'success', 'token':user[0].session_id})
     return JsonResponse({'status':'failed', 'error':'invalid code'})
-
-
 def resend_verification_code(req):
     user = User.objects.filter(username=req.POST['username'])
     if not user:
@@ -84,8 +120,6 @@ def resend_verification_code(req):
     recipient_list=[user[0].email],
     )
     return JsonResponse({'status':'success'})
-
-
 def login(request):
     password_=request.POST["password"]
     #if user enter email
@@ -104,11 +138,6 @@ def login(request):
     else:
 
         return JsonResponse({'status':'fail','message':'wrong password'})
-
-
-
-
-
 def forget_password(request):
     user = User.objects.filter(email=request.POST('email'))
     if not user:
