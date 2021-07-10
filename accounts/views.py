@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.contrib import auth
 from django.contrib.auth import authenticate
 from rest_framework.views import APIView
+from django.http import HttpResponse
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -13,7 +14,6 @@ from django.core import serializers
 from .serializers import UserSerializer
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
-from django.http import HttpResponse
 from django.db.models import Q
 from django.core.mail import send_mail
 from  django.utils import timezone
@@ -23,8 +23,6 @@ import random,string
 
 def random_string_generator(size=10, chars=string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
-
-
 
 
 

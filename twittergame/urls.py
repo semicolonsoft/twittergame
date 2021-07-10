@@ -18,6 +18,11 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from . import settings
 
+from django.urls import path, include
+from django.views.generic import TemplateView
+from django.contrib.auth.views import LogoutView
+from oauth_app.views import GoogleLogIn,download_file
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('account/', include('accounts.urls')),
@@ -26,5 +31,12 @@ urlpatterns = [
     path('RecommendPost/', include('RecommendPost.urls')),
     path('GameBar/', include('GameBar.urls')),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+
+    path('', TemplateView.as_view(template_name="index.html")),
+    path('GoogleLogIn/', GoogleLogIn),
+    path('accounts/', include('allauth.urls')),
+    path('logout', LogoutView.as_view()),
+
+    path('download/', download_file),
     
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)+static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
