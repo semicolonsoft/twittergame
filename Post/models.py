@@ -18,10 +18,13 @@ class postClass(models.Model) :
         return self.message
 
 class replayClass(models.Model):
+    UserName = models.CharField(max_length=40,unique=False,default="None")
+
     mainPost = models.IntegerField()
     subPost = models.IntegerField()
 
     def __str__(self):
+
         return self.mainPost
 
 class likesClass(models.Model):
