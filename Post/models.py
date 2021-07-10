@@ -19,15 +19,17 @@ class postClass(models.Model) :
 
 class replayClass(models.Model):
     UserName = models.CharField(max_length=40,unique=False,default="None")
+
     mainPost = models.IntegerField()
     subPost = models.IntegerField()
 
     def __str__(self):
-        return self.subPost.__str__()
+
+        return self.mainPost
 
 class likesClass(models.Model):
     PostId = models.IntegerField()
-    UserName = models.CharField(max_length=40,unique=False,default="None")
+    UserName = models.CharField(max_length=40,unique=False)
 
     def __str__(self):
         return self.PostId
