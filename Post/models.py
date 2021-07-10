@@ -13,6 +13,7 @@ class postClass(models.Model) :
     postId = models.AutoField(primary_key=True)
     date = models.DateTimeField(auto_now_add=True, editable=False)
     image = models.ImageField('image',blank = True,null=True, validators=[file_size])
+    like = models.IntegerField(blank = True,default = 0)
 
     def __str__(self) :
         return self.message
